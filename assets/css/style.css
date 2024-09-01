@@ -757,6 +757,7 @@ hr {
     color: transparent;
     position: absolute;
     top: 50%;
+    margin: 0 20px;
     z-index: 1;
     transform: translateY(-50%);
 }
@@ -773,13 +774,13 @@ hr {
 .reviews__btn--prev {
     left: 0;
     transform: rotate(-45deg);
-    padding-right: 2%;
+
 }
 
 .reviews__btn--next {
     right: 0;
     transform: rotate(135deg);
-    padding-right: 2%;
+
 }
 
 

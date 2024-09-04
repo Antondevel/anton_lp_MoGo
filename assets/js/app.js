@@ -1,6 +1,25 @@
+// Header  слайдер
+
+document.addEventListener('DOMContentLoaded', function () {
+    const sliderItems = document.querySelectorAll('.slider__item');
+    const contentItems = document.querySelectorAll('.content__item');
+
+    sliderItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+            // Убираем класс 'active' у всех слайдов и контента
+            sliderItems.forEach(slide => slide.classList.remove('active'));
+            contentItems.forEach(content => content.classList.remove('active'));
+
+            // Добавляем класс 'active' к текущему слайду и соответствующему контенту
+            item.classList.add('active');
+            contentItems[index].classList.add('active');
+        });
+    });
+});
 
 
 // шапка 
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const nav = document.getElementById('nav');
@@ -76,6 +95,9 @@ accordionHeaders.forEach(header => {
 
 // Слайдер 
 
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const sliders = document.querySelectorAll('.reviews');
 
@@ -147,6 +169,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
-
-

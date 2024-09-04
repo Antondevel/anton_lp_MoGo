@@ -1,81 +1,4 @@
 
-// JQuery
-
-
-// $(function() {
-
-//     var header = $("#header"),
-//         introH = $("#intro").innerHeight(),
-//         scrollOffset = $(window).scrollTop();
-
-
-//     /* Fixed Header */
-//     checkScroll(scrollOffset);
-
-//     $(window).on("scroll", function() {
-//         scrollOffset = $(this).scrollTop();
-
-//         checkScroll(scrollOffset);
-//     });
-
-//     function checkScroll(scrollOffset) {
-//         if( scrollOffset >= introH ) {
-//             header.addClass("fixed");
-//         } else {
-//             header.removeClass("fixed");
-//         }
-//     }
-
-
-
-//     /* Smooth scroll */
-//     $("[data-scroll]").on("click", function(event) {
-//         event.preventDefault();
-
-//         var $this = $(this),
-//             blockId = $this.data('scroll'),
-//             blockOffset = $(blockId).offset().top;
-
-//         $("#nav a").removeClass("active");
-//         $this.addClass("active");
-
-//         $("html, body").animate({
-//             scrollTop:  blockOffset
-//         }, 500);
-//     });
-
-
-
-//     /* Menu nav toggle */
-//     $("#nav_toggle").on("click", function(event) {
-//         event.preventDefault();
-
-//         $(this).toggleClass("active");
-//         $("#nav").toggleClass("active");
-//     });
-
-
-
-//     /* Collapse */
-//     $("[data-collapse]").on("click", function(event) {
-//         event.preventDefault();
-
-//         var $this = $(this),
-//             blockId = $this.data('collapse');
-
-//         $this.toggleClass("active");
-//     });
-
-
-//     /* Slider */
-//     $("[data-slider]").slick({
-//         infinite: true,
-//         fade: false,
-//         slidesToShow: 1,
-//         slidesToScroll: 1
-//     });
-
-// });
 
 // шапка 
 
@@ -152,36 +75,74 @@ accordionHeaders.forEach(header => {
 
 
 // Слайдер 
+
 document.addEventListener('DOMContentLoaded', () => {
-    const sliders = document.querySelectorAll('.reviews'); // Находим все слайдеры на странице
+    const sliders = document.querySelectorAll('.reviews');
 
     sliders.forEach(slider => {
         const track = slider.querySelector('.reviews__track');
-        const slides = Array.from(track.children);
+        let slides = Array.from(track.children);
         const prevButton = slider.querySelector('.reviews__btn--prev');
         const nextButton = slider.querySelector('.reviews__btn--next');
         let currentIndex = 0;
 
+        // Клонируем первый и последний слайды
+        const firstClone = slides[0].cloneNode(true);
+        const lastClone = slides[slides.length - 1].cloneNode(true);
+
+        track.appendChild(firstClone);
+        track.insertBefore(lastClone, slides[0]);
+
+        slides = Array.from(track.children);
+        const slideWidth = slides[0].clientWidth;
+
+        // Устанавливаем начальную позицию
+        track.style.transform = `translateX(-${slideWidth}px)`;
+
         const moveToSlide = (index) => {
-            track.style.transform = `translateX(-${index * 100}%)`;
+            track.style.transition = 'transform 0.5s ease-in-out';
+            track.style.transform = `translateX(-${(index + 1) * slideWidth}px)`;
             currentIndex = index;
         };
 
+        nextButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentIndex >= slides.length - 2) {
+                moveToSlide(slides.length - 2);
+                setTimeout(() => {
+                    track.style.transition = 'none';
+                    track.style.transform = `translateX(-${slideWidth}px)`;
+                    currentIndex = 0;
+                }, 500); // Ждем окончания анимации
+            } else {
+                moveToSlide(currentIndex + 1);
+            }
+        });
+
         prevButton.addEventListener('click', (e) => {
             e.preventDefault();
-            if (currentIndex === 0) {
-                moveToSlide(slides.length - 1);
+            if (currentIndex <= 0) {
+                moveToSlide(0);
+                setTimeout(() => {
+                    track.style.transition = 'none';
+                    track.style.transform = `translateX(-${(slides.length - 2) * slideWidth}px)`;
+                    currentIndex = slides.length - 3;
+                }, 500); // Ждем окончания анимации
             } else {
                 moveToSlide(currentIndex - 1);
             }
         });
 
-        nextButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (currentIndex === slides.length - 1) {
-                moveToSlide(0);
-            } else {
-                moveToSlide(currentIndex + 1);
+        track.addEventListener('transitionend', () => {
+            // Убираем transition, если это переход к клонированному слайду
+            if (slides[currentIndex + 1] === firstClone) {
+                track.style.transition = 'none';
+                track.style.transform = `translateX(-${slideWidth}px)`;
+                currentIndex = 0;
+            } else if (slides[currentIndex + 1] === lastClone) {
+                track.style.transition = 'none';
+                track.style.transform = `translateX(-${(slides.length - 2) * slideWidth}px)`;
+                currentIndex = slides.length - 3;
             }
         });
     });

@@ -94,10 +94,6 @@ accordionHeaders.forEach(header => {
 
 
 // Слайдер 
-
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const sliders = document.querySelectorAll('.reviews');
 
@@ -116,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         track.insertBefore(lastClone, slides[0]);
 
         slides = Array.from(track.children);
-        const slideWidth = slides[0].clientWidth;
+        let slideWidth = slides[0].clientWidth;
 
         // Устанавливаем начальную позицию
         track.style.transform = `translateX(-${slideWidth}px)`;
@@ -126,6 +122,17 @@ document.addEventListener('DOMContentLoaded', () => {
             track.style.transform = `translateX(-${(index + 1) * slideWidth}px)`;
             currentIndex = index;
         };
+
+        const updateSlideWidth = () => {
+            slideWidth = slides[0].clientWidth;
+            track.style.transition = 'none'; // Отключаем анимацию на время пересчета
+            track.style.transform = `translateX(-${(currentIndex + 1) * slideWidth}px)`;
+        };
+
+        // Обработчик события изменения размера окна
+        window.addEventListener('resize', () => {
+            updateSlideWidth();
+        });
 
         nextButton.addEventListener('click', (e) => {
             e.preventDefault();
@@ -156,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         track.addEventListener('transitionend', () => {
-            // Убираем transition, если это переход к клонированному слайду
             if (slides[currentIndex + 1] === firstClone) {
                 track.style.transition = 'none';
                 track.style.transform = `translateX(-${slideWidth}px)`;
@@ -169,3 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+
+
+
